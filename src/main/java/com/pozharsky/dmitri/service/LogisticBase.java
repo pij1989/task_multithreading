@@ -52,11 +52,12 @@ public class LogisticBase {
         lockTerminal.lock();
         try {
             while (freeTerminal.isEmpty()) {
-                notFull.await();
+                logger.info("Wait terminal...");
+                notEmpty.await();
             }
             terminal = freeTerminal.remove();
             givenAwayTerminal.add(terminal);
-            notEmpty.signal();
+            notFull.signal();
         } catch (InterruptedException e) {
             logger.error(e);
         } finally {
@@ -69,11 +70,12 @@ public class LogisticBase {
         lockTerminal.lock();
         try {
             while (freeTerminal.size() == INITIAL_AMOUNT_TERMINAL){
-                notEmpty.await();
+                logger.info("Wait release...");
+                notFull.await();
             }
             givenAwayTerminal.remove(terminal);
             freeTerminal.add(terminal);
-            notFull.signal();
+            notEmpty.signal();
         } catch (InterruptedException e) {
             logger.error(e);
         } finally {
