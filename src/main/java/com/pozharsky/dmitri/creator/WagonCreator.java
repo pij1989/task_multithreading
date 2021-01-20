@@ -1,5 +1,6 @@
 package com.pozharsky.dmitri.creator;
 
+import com.pozharsky.dmitri.entity.Cargo;
 import com.pozharsky.dmitri.entity.Wagon;
 import com.pozharsky.dmitri.parser.DataParser;
 import com.pozharsky.dmitri.reader.DataReader;
@@ -22,10 +23,12 @@ public class WagonCreator {
         DataReader reader = new DataReader();
         String initialData = reader.readData(fileData);
         DataParser parser = DataParser.getInstance();
-        List<Integer> data = parser.parse(initialData);
+        List<String> data = parser.parse(initialData);
         List<Wagon> wagons = new ArrayList<>();
-        for (int i = 0; i < data.get(1); i++) {
-            wagons.add(new Wagon(LogisticBase.getInstance()));
+        int amount = Integer.parseInt(data.get(0));
+        for (int i = 0; i < amount; i++) {
+            Cargo cargo = new Cargo(Boolean.parseBoolean(data.get(i + 1)));
+            wagons.add(new Wagon(LogisticBase.getInstance(), cargo));
         }
         return wagons;
     }
