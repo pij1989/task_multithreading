@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 public class LoadOperationState implements State {
     private static final Logger logger = LogManager.getLogger(LoadOperationState.class);
-    private static final long DURATION = 2L;
+    private static final long DURATION = 5L;
 
     @Override
     public void handle(Terminal terminal) {

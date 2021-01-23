@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 public class UnloadOperationState implements State {
     private static final Logger logger = LogManager.getLogger(UnloadOperationState.class);
-    private static final long DURATION = 2L;
+    private static final long DURATION = 5L;
 
     @Override
     public void handle(Terminal terminal) {
