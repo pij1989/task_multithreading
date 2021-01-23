@@ -1,7 +1,7 @@
 package com.pozharsky.dmitri.entity;
 
 public class Cargo {
-    boolean isPerishable;
+    private boolean isPerishable;
 
     public Cargo(boolean isPerishable) {
         this.isPerishable = isPerishable;

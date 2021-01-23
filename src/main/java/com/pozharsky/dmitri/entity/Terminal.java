@@ -1,10 +1,15 @@
 package com.pozharsky.dmitri.entity;
 
-import com.pozharsky.dmitri.state.State;
-import com.pozharsky.dmitri.state.impl.StartState;
+import com.pozharsky.dmitri.entity.impl.PrepareOperationState;
+
+import java.util.LinkedList;
+import java.util.Optional;
+import java.util.Queue;
 
 public class Terminal {
-    private State state = new StartState();
+    private Queue<Cargo> cargoList = new LinkedList<>();
+    private State state = new PrepareOperationState();
+    private Wagon wagon;
 
     public State getState() {
         return state;
@@ -14,11 +19,28 @@ public class Terminal {
         this.state = state;
     }
 
-    public void previousState() {
-        state.previous(this);
+    public Wagon getWagon() {
+        return wagon;
     }
 
-    public void nextState() {
-        state.next(this);
+    public void setWagon(Wagon wagon) {
+        this.wagon = wagon;
+    }
+
+    public void handle() {
+        state.handle(this);
+    }
+
+    public void cancel() {
+        state.toCancel(this);
+    }
+
+    public void addCargo(Cargo cargo) {
+        cargoList.add(cargo);
+    }
+
+    public Optional<Cargo> getCargo() {
+        Cargo cargo = cargoList.poll();
+        return Optional.ofNullable(cargo);
     }
 }

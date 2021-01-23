@@ -1,11 +1,11 @@
-package com.pozharsky.dmitri.service;
+package com.pozharsky.dmitri.entity;
 
-import com.pozharsky.dmitri.entity.Terminal;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -13,6 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class LogisticBase {
     private static final Logger logger = LogManager.getLogger(LogisticBase.class);
     private static final int INITIAL_AMOUNT_TERMINAL = 5;
+    private static final AtomicBoolean isInstance = new AtomicBoolean(false);
     private static LogisticBase instance;
     private static final Lock lockInstance = new ReentrantLock();
     private final Queue<Terminal> freeTerminal;
@@ -20,7 +21,6 @@ public class LogisticBase {
     private final ReentrantLock lockTerminal;
     private final Condition notEmpty;
     private final Condition notFull;
-
 
     private LogisticBase() {
         freeTerminal = new ArrayDeque<>();
@@ -34,11 +34,12 @@ public class LogisticBase {
     }
 
     public static LogisticBase getInstance() {
-        if (instance == null) {
+        if (!isInstance.get()) {
             lockInstance.lock();
             try {
                 if (instance == null) {
                     instance = new LogisticBase();
+                    isInstance.set(true);
                 }
             } finally {
                 lockInstance.unlock();

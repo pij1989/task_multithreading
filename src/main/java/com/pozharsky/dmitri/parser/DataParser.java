@@ -15,9 +15,10 @@ public class DataParser {
         return instance;
     }
 
-    public List<String> parse(String initialData) {
+    public List<Integer> parse(String initialData) {
         String[] data = initialData.split(COMMA_DELIMITER);
         return Arrays.stream(data)
+                .map(Integer::parseInt)
                 .collect(Collectors.toList());
     }
 }

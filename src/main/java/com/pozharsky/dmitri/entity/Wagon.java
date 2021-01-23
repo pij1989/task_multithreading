@@ -1,53 +1,69 @@
 package com.pozharsky.dmitri.entity;
 
-import com.pozharsky.dmitri.service.LogisticBase;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.concurrent.TimeUnit;
+import java.util.Optional;
 
 public class Wagon implements Runnable {
-    private static final Logger logger = LogManager.getLogger(Wagon.class);
+    private long id;
     private LogisticBase logisticBase;
-    private Cargo cargo;
+    private Optional<Cargo> cargo;
 
-    public Wagon(LogisticBase logisticBase, Cargo cargo) {
-        this(logisticBase);
+    public Wagon(long id, LogisticBase logisticBase, Optional<Cargo> cargo) {
+        this.id = id;
+        this.logisticBase = logisticBase;
         this.cargo = cargo;
     }
 
-    public Wagon(LogisticBase logisticBase) {
-        this.logisticBase = logisticBase;
+    public long getId() {
+        return id;
     }
 
-    public Cargo getCargo() {
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Optional<Cargo> getCargo() {
         return cargo;
     }
 
-    public void setCargo(Cargo cargo) {
+    public void setCargo(Optional<Cargo> cargo) {
         this.cargo = cargo;
     }
 
     @Override
     public void run() {
-        try {
-            logger.debug("Cargo: " + cargo);
-            Terminal terminal = logisticBase.getTerminal();
-            terminal.nextState();
-            TimeUnit.SECONDS.sleep(2);
-            terminal.nextState();
-            terminal.nextState();
-            logisticBase.releaseTerminal(terminal);
-        } catch (InterruptedException e) {
-            logger.error(e);
-        }
+        Terminal terminal = logisticBase.getTerminal();
+        terminal.setWagon(this);
+        terminal.handle();
+        terminal.handle();
+        terminal.handle();
+        logisticBase.releaseTerminal(terminal);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Wagon wagon = (Wagon) o;
+
+        if (id != wagon.id) return false;
+        if (logisticBase != null ? !logisticBase.equals(wagon.logisticBase) : wagon.logisticBase != null) return false;
+        return cargo.isPresent() ? cargo.equals(wagon.cargo) : wagon.cargo.isEmpty();
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + (logisticBase != null ? logisticBase.hashCode() : 0);
+        result = 31 * result + (cargo.isPresent() ? cargo.hashCode() : 0);
+        return result;
+    }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Wagon{");
-        sb.append("cargo=").append(cargo);
+        sb.append("id=").append(id);
+        sb.append(", cargo=").append(cargo);
         sb.append('}');
         return sb.toString();
     }
